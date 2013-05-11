@@ -1,0 +1,48 @@
+Display Database
+
+--------------- 1 / 6 ----------------
+
+ Name      Nathan Story
+ Location  Derr 235
+ Phone     5124512
+ Email     ns1067@txstate.edu
+
+--------------- 2 / 6 ----------------
+
+ Name      Brandon Salmans
+ Location  Derr 235
+ Phone     5124513
+ Email     bss49@txstate.edu
+
+--------------- 3 / 6 ----------------
+
+ Name      Gabriel Sarabia
+ Location  Derr 235
+ Phone     5124514
+ Email     q_s68@txstate.edu
+
+--------------- 4 / 6 ----------------
+
+ Name      Qijun Gu
+ Location  Nueces 206 
+ Phone     2453518
+ Email     qijun@txstate.edu
+
+--------------- 5 / 6 ----------------
+
+ Name      Nathan A Story
+ Location  Derr 235
+ Phone     5124987
+ Email     foo
+
+--------------- 6 / 6 ----------------
+
+ Name      Nathan Aaron Story
+ Location  Derr 235
+ Phone     5120911
+ Email     nathan.story73@gmail.com
+
+-------------------------------------
+
+Press q to Quite
+

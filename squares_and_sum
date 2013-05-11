@@ -1,0 +1,17 @@
+# squares_and_sum takes a list or integer arguments, prints their square and
+#	prints a sum of the squares
+#!/bin/bash
+
+total=0
+
+while [ "$1" != "" ]
+do
+	square=$(expr $1 \* $1)
+	echo "Square of " $1 " is " $square
+	total=$(expr $total + $square)
+	shift
+done
+echo "The sum of these squares is " $total
+
+exit 0
+	 

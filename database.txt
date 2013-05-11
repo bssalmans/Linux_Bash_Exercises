@@ -1,0 +1,9 @@
+Name:Location:Phone:Email
+Nathan Story:Derr 235:5124512:ns1067@txstate.edu
+Brandon Salmans:Derr 235:5124513:bss49@txstate.edu
+Gabriel Sarabia:Derr 235:5124514:q_s68@txstate.edu
+Qijun Gu:Nueces 206 :2453518:qijun@txstate.edu
+Nathan A Story:Derr 235:5124987:foo
+Nathan Aaron Story:Derr 235:5120911:nathan.story73@gmail.com
+Brandon Solomon:2512 Sweeney Lane:7857279765:b.s.salmans@gmail.com
+Michelle Indio:457 zdfgarg:7857857857:zsdfa@maksl.com

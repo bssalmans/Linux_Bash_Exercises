@@ -1,0 +1,547 @@
+# simple_database is a database script with ten options
+#!/bin/bash
+
+file="database.txt"
+prt="Printable_Database.txt"
+mailq="bss49"
+
+export IFS=":"
+
+if [ ! -f $file ]
+then
+ echo "Name:Address:Phone:Email" >> "$file"
+  chmod 755 "$file"
+fi
+
+while [ answer != "0" ]
+do
+  clear
+  echo -e "Welcome To My Contact Database!\n Select A Function? \n"
+  echo " 1)  Find A Record"
+  echo " 2)  Add A New Record"
+  echo " 3)  Update A Record"
+  echo " 4)  Remove A Record"
+  echo " 5)  Send Email"
+  echo " 6)  Database Last Modified"
+  echo " 7)  Display Size Of Database"
+  echo " 8)  Display Number Of Records"
+  echo " 9)  Display Database"
+  echo "10)  Print Database"
+  echo " 0)  Exit"
+  echo ""
+  read -ep " Make Selection " answer
+  clear
+  case $answer in
+
+  1) 
+     num=$(sed -n '$=' $file)
+     num=$((num - 1))
+     if [ $num -eq 0 ]
+     then
+        echo -e "Database Is Empty\n"
+     else
+       echo -e "Find a Record\n"
+       read -p "Search: " name
+       num=$(grep -iswc "$name" $file)
+       if [ $num == "0"  ]
+       then
+         clear
+         echo -e "Record Not Found\n"
+       else
+         clear
+         echo -e "Search Results\n"
+         IFS=":"
+         grep -iw "$name" $file | while read a b c d 
+         do
+           echo -e "-----------------------------"
+           echo " Name      $a"
+           echo " Location  $b"
+           echo " Phone     $c"
+           echo " Email     $d"
+         done
+         echo -e "-----------------------------\n"
+       fi
+    fi
+  ;;
+
+  2) 
+     echo -e "Add A New Record\n" 
+     read -p "Enter Name: " name
+     grep -wiq "^$name" $file
+     if [ $? -ne 0  ] 
+     then
+       read -p "Please Enter Address: " addr
+       read -p "Please Enter Phone Number: " phoneNum
+       read -p "Please Enter Email: " email
+       grep -wi "$email" $file
+       if [ $? -ne 0 ] 
+       then 
+         clear
+         echo -e "Add A New Record Record\n" 
+         echo -e "-----------------------------" 
+         echo " Name      $name" 
+         echo " Location  $addr" 
+         echo " Phone     $phoneNum" 
+         echo " Email     $email"
+         echo -e "-----------------------------\n"
+         echo -e "Add to Database y/n\n"
+         read yn
+         case $yn in
+           y | Y | yes | YES )
+             clear
+             echo -e "Successfully Added\n"
+             echo "$name:$addr:$phoneNum:$email" >> $file
+           ;;
+           n | N | no | NO )
+             clear 
+             echo -e "Record Not Recorded\n"
+          ;;
+          *) break 
+          ;;
+        esac
+      else
+        clear
+        echo -e "Email Already Exists\n"
+    fi
+      else
+      clear
+      echo -e "Record Already Exist\n"
+    fi
+  ;; 
+
+  3)
+     num=$(sed -n '$=' $file)
+     num=$((num - 1))
+     if [ $num -eq 0 ]
+     then
+        echo -e "Database Is Empty\n"
+     else 
+       while [ yn != "y" ]
+       do
+         echo -e "Update a Record\n"
+         read -p "Enter Current Name: " searchName
+         num=$(grep -iswc "$searchName" $file)
+         if [ $num -eq "0" ]
+         then
+           clear
+           echo -e "No Record Found\n"
+           break
+         elif [ $num -gt "1" ]
+         then
+           clear
+           echo -e "Too Many Records Found\n"
+    
+           echo ""
+           break
+         else
+           clear
+           string=$(grep -iw "$searchName" $file)
+           stringArr=($string)
+           echo -e "Select Option To Change (Current)\n"
+           echo "1) Update Name (${stringArr[0]})"
+           echo "2) Update Location (${stringArr[1]})"
+           echo "3) Update Phone Number (${stringArr[2]})"
+           echo "4) Update Email (${stringArr[3]})"
+           echo ""
+           read -p "Choose An Option To Update: " answer2
+           echo ""
+           case $answer2 in
+             1) read -p "Enter new name: " nName
+                grep -iwq "$nName" $file
+                if [ $? -eq 0 ]
+                then
+                  clear
+                  echo -e "Name Already Exists\n"
+                else
+                  clear
+                  sed -i "s/${stringArr[0]}/$nName/g" $file
+                  echo -e "Name Updated\n"
+                fi
+             ;;
+             2) read -p "Enter New Location: " nLocation
+                sed -i "s/${stringArr[1]}/$nLocation/g" $file
+                clear
+                echo -e "Location Updated\n"
+             ;;
+             3) read -p "Enter New Phone number: " nPhone
+                echo -e "\nPhone Updated"
+                sed -i "s/${stringArr[2]}/$nPhone/g" $file 
+                clear
+                echo -e "Phone Number Updated\n"
+
+             ;;
+             4) read -p "Enter New email: " nEmail
+                grep -iwq "$nEmail" $file
+                if [ $? -eq 0 ]
+                then
+                  clear
+                  echo -e "Email Already Exists\n"
+                else
+                  clear
+                  sed -i "s/${stringArr[3]}/$nEmail/g" $file
+                  echo -e "Email Updated\n"
+                fi
+             ;;
+             *) break ;;
+           esac
+           echo "Make Another Change y/n?"
+           read yn
+           case $yn in
+             y | Y | yes | YES )
+               yn="y" ;;
+             n | N | no | NO )
+               clear
+               break ;;
+             *) break ;;
+             esac
+           fi
+          clear
+      done
+    fi
+  ;;
+
+  4) 
+    num=$(sed -n '$=' $file)
+    num=$((num - 1))
+    if [ $num -eq 0 ]
+    then
+       echo -e "Database Is Empty\n"
+    else
+      echo -e "Remove a Record\n" 
+      read -p "Enter Name: " nameDelete
+      num=$(grep -icw "$nameDelete" $file)
+      if [ $num -eq 1 ]
+      then
+         echo -e "\nSelect y/n To Remove A Record"
+         read yn
+         case $yn in
+            y | Y | yes | YES | Yes )
+              clear
+              echo -e "Record Deleted From Database\n"
+              grep -iw "$nameDelete" $file | while read a b c d
+              do
+                echo " Name      $a"
+                echo " Location  $b"
+                echo " Phone     $c"
+                echo " Email     $d"
+              done
+              echo ""
+              sed -e /"$nameDelete"/Id $file>tmp
+              mv tmp $file
+	      ;;
+            n | N | no | NO )
+              clear
+              grep -iw "$nameDelete" $file | while read a b c d
+              do
+                echo -e "Record Was Not Removed\n"
+                echo " Name      $a"
+                echo " Location  $b"
+                echo " Phone     $c"
+                echo -e " Email     $d\n"
+              done
+	      ;;
+            *) break ;;
+            esac
+      elif [ $num -gt 1 ]
+      then 
+         clear
+         echo -e "Too Many Records\n"
+      else
+         clear
+         echo -e "No Records Found\n"
+      fi
+    fi
+  ;;
+  5) 
+    num=$(sed -n '$=' $file)
+    num=$((num - 1))
+    if [ $num -eq 0 ]
+    then
+       echo -e "Database Is Empty\n"
+    else
+      echo -e "Send Email\n"
+      echo " I) Select Single Recipient"
+      echo " M) Select Mutilple Recipients" 
+      echo " A) Select All Recipients" 
+      echo -e " E) Exit\n"
+      read val
+      case $val in
+      i | I )
+        clear
+        echo -e "Send Email\n"   
+        read -p "Enter name: " name
+        num=$(grep -iswc "$name" $file)
+        if [ $num -eq 0 ]
+        then
+          clear
+          echo -e "No Matches Found\n"
+        elif [ $num -gt 1 ]
+        then
+          clear
+          echo -e "Too Many Matches\n"
+          grep -iqsw "$name" $file
+        else
+          clear
+          IFS=":"
+          string=$(grep -iw "$name" $file)
+          eString=($string)
+          EMAIL=${eString[3]}
+          read -p "Type Subject: " SUBJECT
+          echo "Subject:  ${SUBJECT}" > test.mail
+          read -p "Type Message: " MESSAGE
+          echo "${MESSAGE}" >> test.mail
+          echo -e "\n" >> test.mail
+          echo -e "\nSend Email y/n ?"
+          read yn
+          case $yn in
+            y | Y | yes | YES )
+              clear
+              echo "" > /var/spool/mail/$mailq
+              sendmail $EMAIL < test.mail           
+              echo -e "Please Wait For Confirmation\n"
+              sleep 3
+              err=$(grep -c "failed" /var/spool/mail/$mailq)
+              echo -e "Email to ${name} at ${EMAIL}\n"
+              if [ $err -eq 0 ]
+              then
+                echo -e "     Was Successful\n"
+              else
+                echo -e "     Failed\n"
+              fi 
+              unset emailArr
+           ;;
+           n | N | no | NO )
+              clear
+              echo -e "Email Canceled\n"
+           ;;
+           esac
+       fi
+     ;;
+     m | M )
+       clear
+       echo "" > /var/spool/mail/mailq
+       while [ choice != "c" ]
+       do
+         clear
+         IFS=":"
+         n="0"
+         num=$(sed -n '$=' $file)
+         num=$((num - 1))
+         echo -e "Email Options\n"
+         echo -e "  1-$num) Select Recipients"
+         echo -e "    d) Done Adding Recipients"
+         echo -e "    c) Cancel\n"
+
+         while read a b c d
+         do
+           echo $n $a $d
+           n=$[$n+1]
+         done < database.txt | tail -n +2
+         echo ""
+
+         echo "Recipients Added "
+         for index in ${!emailArr[*]}
+         do
+            printf "%4d: %s\n" $index ${emailArr[$index]}
+         done
+           echo ""  
+           read -p "Make A Selection " choice
+           case $choice in
+           c | C )
+             clear
+             echo -e "Canceled\n"
+             unset emailArr
+             break
+           ;;
+           d | D )
+             clear
+             echo "" > /var/spool/mail/$mailq
+             len=${#emailArr[*]}
+             if [ $len -eq 0 ]
+             then
+               clear
+               echo -e "No Recipients Were Selected\n"
+               break
+             else
+               read -p "Type Subject " SUBJECT
+               echo "Subject:  ${SUBJECT}" > test.mail
+               read -p "Type Message " MESSAGE
+               echo "${MESSAGE}" >> test.mail
+               echo -e "\n" >> test.mail
+               echo -e "\nSelect y To Send Email\n"
+               read yn
+               case $yn in
+                 y | Y )
+                   clear
+                   echo -e "Please Wait For Confirmation Delivery \n"
+                   echo -e "------------------------------------------------------------------------------"
+                   for index in ${!emailArr[*]}
+                   do
+                     echo "" > /var/spool/mail/$mailq
+                     sendmail ${emailArr[$index]} < test.mail
+                     sleep 1
+                     err=$(grep -c "failed" /var/spool/mail/$mailq)
+                     if [ $err -eq 0 ]
+                     then
+                       echo -e "\nEmail Sent To ${nameArr[$index]} At ${emailArr[$index]} Was Successful\n"
+                     else
+                       echo -e "\nEmail Sent To ${nameArr[$index]} At ${emailArr[$index]} Failed\n"
+                     fi
+                     echo -e "-------------------------------------------------------------------------------\n"
+                   done
+                   break
+                   ;;
+                   * )
+                     clear
+                     echo -e "Email Canceled\n" 
+                     unset emailArr
+                     break
+                   esac
+             fi
+           ;;
+             [1-$num] )
+                value=$((choice + 1))
+                count=$(grep -c "" $file)
+                value=$(sed $value'!d' $file)
+                array=($value)
+                emailArr[$[${#emailArr[@]}+1]]=${array[3]}
+                nameArr[$[${#nameArr[@]}+1]]=${array[0]}
+                clear
+             ;;
+             * ) echo "Choose Another Option"
+          esac
+       done
+    
+     ;;
+     a | A)
+         clear
+         size=$(expr $(grep -c ':' $file) - 1 )
+         if [ $size -eq 0 ]
+         then 
+           echo -e "Database is Empty\n"
+         else
+           echo -e "Email All Recipients\n"
+           read -p "Type Subject: " SUBJECT
+           echo "Subject:  ${SUBJECT}" > test.mail
+           read -p "Type Message: " MESSAGE
+           echo "${MESSAGE}" >> test.mail
+           echo -e "\n" >> test.mail
+           echo ""
+           echo -e "Confirm Sending Email To All y/n ?"
+           read yn
+           case $yn in
+             y | Y | yes | YES )
+               clear
+               echo -e "Please Wait For Confirmation Delivery \n"
+               echo -e "------------------------------------------------------------------------------"
+               echo "" > /var/spool/mail/$mailq
+               sed 1d $file | while read a b c d
+               do
+                 echo "" > /var/spool/mail/$mailq
+                 sendmail $d < test.mail
+                 sleep 1
+                 err=$(grep -c "failed" /var/spool/mail/$mailq)
+                 if [ $err -eq 0 ]
+                 then
+                   echo -e "\nEmail Sent To $a At $d Was Successful\n"
+                 else
+                   echo -e "\nEmail Sent To $a At $d Failed\n"
+                 fi
+                 echo -e "------------------------------------------------------------------------------\n"
+             done
+             ;;
+             * ) 
+               clear
+               echo -e "Email Canceled\n"
+             ;;
+            esac
+        fi
+        ;;
+        e | E) 
+          clear 
+          echo -e "Email Canceled\n"
+        ;;
+     esac
+    fi
+  ;;
+  6) 
+     echo -e "Database Last Modified\n"
+     IFS="-: "
+     string=$(stat -c %y $file) 
+     val=($string)
+     echo "Date ${val[1]}/${val[2]}/${val[0]}"
+     echo "Time ${val[3]}:${val[4]}"
+     IFS=":"
+     echo "" 
+  ;;
+  7) 
+     echo -e "Display Size Of Database\n" 
+     du -h $file
+     echo ""
+  ;;
+  8) 
+     echo -e "Number Of Records In Database:\n"
+     echo $(expr $(grep -c ':' $file) - 1 )
+     echo ""
+  ;;
+  9)
+     num=$(sed -n '$=' $file)
+     num=$((num - 1))
+     if [ $num -eq 0 ]
+     then
+        echo -e "Database Is Empty\n"
+     else
+       echo -e "Display Database\n" > $prt
+       count=1
+       total=$(expr $(grep -c ':' $file) - 1 )
+
+       sed 1d $file | while read a b c d
+       do 
+         echo -e "--------------- $count / $total ----------------\n" >> $prt
+         echo " Name      $a" >> $prt
+         echo " Location  $b" >> $prt
+         echo " Phone     $c" >> $prt
+         echo " Email     $d" >> $prt
+         echo "" >> $prt
+         count=$[$count+1]
+       done
+       echo -e "-------------------------------------\n" >> $prt
+       echo -e "Press q to Quite\n" >> $prt
+       less $prt
+    fi
+  ;;
+  10)
+     num=$(sed -n '$=' $file)
+     num=$((num - 1))
+     if [ $num -eq 0 ]
+     then
+        echo -e "Database Is Empty\n"
+     else
+       echo -e "Records In Database\n)" > $prt
+       count=1
+       total=$(expr $(grep -c ':' $file) - 1 )
+
+       sed 1d $file | while read a b c d
+       do
+         echo -e "--------------- $count / $total ----------------\n" >> $prt
+         echo " Name      $a" >> $prt
+         echo " Location  $b" >> $prt
+         echo " Phone     $c" >> $prt
+         echo " Email     $d" >> $prt
+         echo "" >> $prt
+         count=$[$count+1]
+       done
+       echo -e "-------------------------------------\n" >> $prt
+       lpr -P cs_derr231_letter $prt
+       echo "Printing "
+       echo""
+     fi
+  ;;
+  0) echo -e "Good Bye\n" 
+     break 
+  ;; 
+  esac
+  echo -e "Press Enter to Return to Menu"
+  read key
+done
+exit 0

@@ -1,0 +1,29 @@
+# copy_files is a simple bash script that takes two directory arguments
+#	and copies from the files listed in the first to the second
+#!/bin/bash
+
+read -p "Enter directory to copy from: " from_dir
+read -p "Enter directory to copy to: " to_dir
+
+files=$(ls ./$from_dir)
+count="1"
+preunder=
+postfix=
+
+for f in "$files" ; do
+	word=$f
+	while [ $(find ./${to_dir} -name "$word") ] ; do
+		count=$(expr $count + 1)
+ 	done
+	preunder=${word%%_*}
+	postfix=${word##*.}
+	filename=${preunder}_${count}.${postfix} 
+	cd ./${from_dir}
+	if [ "$word" != "$filename" ] ; then
+		cp ${word} /${filename}
+	fi
+	cd ..
+	cp ${from_dir}/${filename} ${to_dir}
+	count=$(expr $count + 1)
+done
+exit 0

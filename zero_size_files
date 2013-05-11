@@ -1,0 +1,33 @@
+# zero_size_files takes a directory argument and prints out any zero
+#	size files listed in it
+#!/bin/bash
+file="file.log"
+
+if [ -d "$1" ] ; then
+        cd "$1"
+        if [ ! -f $file ] ; then
+                touch "$file"
+                chmod 755 "$file"
+        fi
+        files=$(ls -a)
+        du -a >> "$file"
+        for f in "$files" ; do
+                if [ -d "$f" ] ; then
+                        ./file_size2 "$f"
+                fi
+        grep -iw '^0' $file
+        rm -f "$file"
+        cd ..
+        done
+else
+	if [ -f "$1" ] ; then
+		echo "$1 is not a directory"
+	else 
+		echo "This is invalid input"
+	fi
+	exit 1
+fi
+
+exit 0
+~
+~
